@@ -65,7 +65,7 @@ socket.on("typing", function (data) {
     // This is the correct code
     // document.getElementById("typing").setAttribute("hidden", "");
 
-    // This is to test the "removeAttribute" function
+    // This is to test the "removeAttribute" function (it works)
     // this should be under "true"
     document.getElementById("typing").removeAttribute("hidden");
     document.getElementById("typing").innerHTML = data + " is typing...";
