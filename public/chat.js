@@ -8,7 +8,7 @@ var btn = $("#send");
 var output = $("#output");
 var feedback = $("#feedback");
 
-var typing;
+var typing = false;
 
 socket.emit("history", {}, function (response) {
   response.forEach((el) => {
@@ -28,7 +28,6 @@ btn.on("click", function () {
 });
 
 message.keypress(function () {
-  socket.emit("typing", username.val());
   document.getElementById("message").addEventListener("keypress", (e) => {
     typing = true;
     console.log("keydown: " + typing);
@@ -37,6 +36,11 @@ message.keypress(function () {
   document.getElementById("message").addEventListener("keyup", () => {
     typing = false;
     console.log("keyup: " + typing);
+  });
+
+  socket.emit("typing", {
+    username: username.val(),
+    typing: typing,
   });
 });
 
@@ -50,27 +54,17 @@ socket.on("chat", function (data) {
 });
 
 socket.on("typing", function (data) {
-  if (typing === true) {
-    // *** Problem: the "typing" variable is not getting the value from line 33 and 38 *** //
-
-    // this is for testing
-    document.getElementById("typing").setAttribute("hidden", "");
-
-    // This is the correct code
-    // document.getElementById("typing").removeAttribute("hidden");
+  if (data.typing === true) {
+    document.getElementById("typing").removeAttribute("hidden");
     console.log("keydown");
     // view the console from the other clients
-    console.log(typing); // Should not be undefined as value are given under line 33 and 38
+    console.log(data.typing);
   } else {
-    // This is the correct code
-    // document.getElementById("typing").setAttribute("hidden", "");
-
-    // This is to test the "removeAttribute" function (it works)
-    // this should be under "true"
-    document.getElementById("typing").removeAttribute("hidden");
-    document.getElementById("typing").innerHTML = data + " is typing...";
+    document.getElementById("typing").setAttribute("hidden", "");
+    document.getElementById("typing").innerHTML =
+      data.username + " is typing...";
     console.log("keyup");
     // view the console from the other clients
-    console.log(typing); // Should not be undefined as value are given under line 33 and 38
+    console.log(data.typing);
   }
 });
